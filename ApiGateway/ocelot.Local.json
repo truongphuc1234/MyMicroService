@@ -1,0 +1,22 @@
+{
+    "Routes": [
+        {
+            "DownstreamPathTemplate": "/api/posts/{postId}",
+            "DownstreamScheme": "https",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 80
+                }
+            ],
+            "UpstreamPathTemplate": "/posts/{postId}",
+            "UpstreamHttpMethod": [
+                "Put",
+                "Delete"
+            ]
+        }
+    ],
+    "GlobalConfiguration": {
+        "BaseUrl": "http://localhost:5010"
+    }
+}

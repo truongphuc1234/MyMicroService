@@ -1,0 +1,20 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+  apigateway:
+    container_name: apigateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 8001:80
+    depends_on:
+      - feed.api
+
+  feed.api:
+    container_name: feed.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 8002:80

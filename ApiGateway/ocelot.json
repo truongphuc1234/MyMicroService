@@ -1,0 +1,21 @@
+{
+    "Routes": [
+        {
+            "DownstreamPathTemplate": "/WeatherForecast",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "feedapi",
+                    "Port": "80"
+                }
+            ],
+            "UpstreamPathTemplate": "/Feed",
+            "UpstreamHttpMethod": [
+                "GET"
+            ]
+        }
+    ],
+    "GlobalConfiguration": {
+        "BaseUrl": "http://apigateway:5010"
+    }
+}
