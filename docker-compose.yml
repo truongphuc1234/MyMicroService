@@ -15,3 +15,14 @@ services:
       context: .
       dockerfile: Services/Feed/Feed.API/Dockerfile
 
+  user.api:
+    image: user.api
+    build:
+      context: .
+      dockerfile: Services/User/User.API/Dockerfile
+
+  identityserver:
+    image: identityserver
+    build:
+      context: .
+      dockerfile: Services/Auth/IdentityServer/Dockerfile

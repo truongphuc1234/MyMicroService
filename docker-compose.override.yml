@@ -11,6 +11,8 @@ services:
       - 8001:80
     depends_on:
       - feed.api
+      - user.api
+      - identityserver
 
   feed.api:
     container_name: feed.api
@@ -18,3 +20,18 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - 8002:80
+
+
+  user.api:
+    container_name: user.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 8003:80
+
+  identityserver:
+    container_name: identityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 8004:80
