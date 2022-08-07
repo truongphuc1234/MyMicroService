@@ -1,0 +1,47 @@
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using User.API.DTOs;
+using User.API.Entities;
+
+namespace User.API.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class UserController : ControllerBase
+{
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IMapper _mapper;
+    public UserController(UserManager<ApplicationUser> userManager, IMapper mapper)
+    {
+        _userManager = userManager;
+        _mapper = mapper;
+    }
+
+    [HttpPost("signup")]
+    public async Task<ActionResult> SignUp(UserSignUpDto signUpDto)
+    {
+        if (await _userManager.Users.AnyAsync(u => u.NormalizedUserName == signUpDto.UserName.ToUpper()))
+        {
+            return BadRequest("Username is existed");
+        }
+
+        if (await _userManager.Users.AnyAsync(u => signUpDto.Email.ToUpper() == u.NormalizedEmail))
+        {
+            return BadRequest("Email is existed");
+        }
+
+        var user = _mapper.Map<ApplicationUser>(signUpDto);
+
+        var result = await _userManager.CreateAsync(user, signUpDto.Password);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return Ok();
+    }
+}

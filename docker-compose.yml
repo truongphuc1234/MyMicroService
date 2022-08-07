@@ -26,3 +26,10 @@ services:
     build:
       context: .
       dockerfile: Services/Auth/IdentityServer/Dockerfile
+
+  mssqldb:
+    image: "mcr.microsoft.com/mssql/server"
+
+# volumes: 
+volumes:
+  mssqldb_data:
