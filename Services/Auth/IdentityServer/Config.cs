@@ -33,5 +33,11 @@ public static class Config
 
                 AllowedScopes = { "api" }
             },
+            new Client
+            {
+                ClientId = "postman",
+                ClientName = "PostMan",
+                AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+            }
         };
 }
