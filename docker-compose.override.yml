@@ -49,4 +49,4 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - mssqldb_data:/var/opt/mssql
+      - ./mssqldb_data:/var/opt/mssql
