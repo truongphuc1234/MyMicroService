@@ -12,7 +12,13 @@
             "UpstreamPathTemplate": "/Feed",
             "UpstreamHttpMethod": [
                 "GET"
-            ]
+            ],
+            "AuthenticationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "AllowedScopes": [
+                    "api"
+                ]
+            }
         }
     ],
     "GlobalConfiguration": {

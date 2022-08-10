@@ -7,6 +7,7 @@ services:
     container_name: apigateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - IdentityUrl=http://identityserver
     ports:
       - 8001:80
     depends_on:

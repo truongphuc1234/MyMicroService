@@ -6,12 +6,14 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", true, true);
+builder.Configuration
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", true, true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
 builder.Services.AddOcelot();
-builder.Services.AddAuthentication().AddJwtBearer("Bearer",o =>
+builder.Services.AddAuthentication().AddJwtBearer("Bearer", o =>
 {
     o.RequireHttpsMetadata = false;
-    o.Authority = "http://localhost:5173";
+    o.Authority = builder.Configuration.GetValue<string>("IdentityUrl");
     o.TokenValidationParameters = new TokenValidationParameters { ValidateAudience = false };
 });
 var app = builder.Build();
