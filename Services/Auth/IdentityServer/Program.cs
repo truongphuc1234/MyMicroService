@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+var migrationsAssembly = typeof(Program).Assembly.GetName().Name;
 var connectionString = builder.Configuration.GetValue<string>("DatabaseSettings:ConnectionString");
 
 builder.Services.AddDbContext<ApplicationDbContext>(o =>
@@ -23,16 +24,23 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
        .AddDefaultTokenProviders();
 
 builder.Services.AddIdentityServer()
-    .AddInMemoryIdentityResources(Config.IdentityResources)
-    .AddInMemoryApiScopes(Config.ApiScopes)
-    .AddInMemoryClients(Config.Clients)
+     .AddConfigurationStore(options =>
+        {
+            options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+                sql => sql.MigrationsAssembly(migrationsAssembly));
+        })
+    .AddOperationalStore(options =>
+        {
+            options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
+                sql => sql.MigrationsAssembly(migrationsAssembly));
+        })
     .AddAspNetIdentity<ApplicationUser>();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
+SeedIdentityData.InitializeDatabase(app);
 app.UseIdentityServer();
 app.UseAuthorization();
 

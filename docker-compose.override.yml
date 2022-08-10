@@ -7,7 +7,7 @@ services:
     container_name: apigateway
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - IdentityUrl=http://identityserver
+      - "IdentityUrl=http://identityserver:80"
     ports:
       - 8001:80
     depends_on:
@@ -36,6 +36,7 @@ services:
     container_name: identityserver
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_CLI_HOME="/tmp/DOTNET_CLI_HOME"
       - "DatabaseSettings:ConnectionString=Server=mssqldb;Database=AppDb;User ID=SA;Password=Your_password123"
     ports:
       - 8004:80
