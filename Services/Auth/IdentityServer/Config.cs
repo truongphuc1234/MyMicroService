@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Duende.IdentityServer.Models;
+using IdentityModel.Client;
 
 namespace IdentityServer;
 
@@ -38,6 +39,10 @@ public static class Config
                 ClientId = "postman",
                 ClientName = "PostMan",
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+               AllowAccessTokensViaBrowser = true,
+               ClientSecrets = {new Secret("Secret".Sha256())},
+                               AllowedScopes = { "api"}
+
             }
         };
 }
