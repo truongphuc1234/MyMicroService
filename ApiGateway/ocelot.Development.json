@@ -19,6 +19,20 @@
                     "api"
                 ]
             }
+        },
+        {
+            "DownstreamPathTemplate": "/connect/token",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "identityserver",
+                    "Port": "80"
+                }
+            ],
+            "UpstreamPathTemplate": "/Login",
+            "UpstreamHttpMethod": [
+                "POST"
+            ]
         }
     ],
     "GlobalConfiguration": {

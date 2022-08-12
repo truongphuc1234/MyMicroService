@@ -8,38 +8,48 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "IdentityUrl=http://identityserver:80"
+      - "CacheSettings:ConnectionString=redisdb,password=Your_password123"
     ports:
       - 8001:80
     depends_on:
       - feed.api
       - user.api
       - identityserver
+      - redisdb
 
   feed.api:
     container_name: feed.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - "CacheSettings:ConnectionString=redisdb,password=Your_password123"
     ports:
       - 8002:80
+    depends_on:
+      - redisdb
 
   user.api:
     container_name: user.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=mssqldb;Database=AppDb;User ID=SA;Password=Your_password123"
+      - "CacheSettings:ConnectionString=redisdb,password=Your_password123"
     ports:
       - 8003:80
     depends_on:
       - mssqldb
+      - redisdb
 
   identityserver:
     container_name: identityserver
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DOTNET_CLI_HOME="/tmp/DOTNET_CLI_HOME"
+      - "CacheSettings:ConnectionString=redisdb,password=Your_password123"
       - "DatabaseSettings:ConnectionString=Server=mssqldb;Database=AppDb;User ID=SA;Password=Your_password123"
     ports:
       - 8004:80
+    depends_on:
+      - redisdb
+      - mssqldb
 
   mssqldb:
     container_name: mssqldb
@@ -51,4 +61,13 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ./mssqldb_data:/var/opt/mssql
+      - mssqldb_data:/var/opt/mssql
+      
+  redisdb:
+    container_name: redisdb
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --requirepass Your_password123
+    volumes: 
+      - redisdb_data:/data

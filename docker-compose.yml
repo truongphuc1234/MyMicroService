@@ -30,6 +30,12 @@ services:
   mssqldb:
     image: "mcr.microsoft.com/mssql/server"
 
+  redisdb:
+    image: "redis:latest"
+
 # volumes: 
 volumes:
   mssqldb_data:
+    external: true
+  redisdb_data:
+    external: true
