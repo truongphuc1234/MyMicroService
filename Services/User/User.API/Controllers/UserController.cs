@@ -3,9 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using User.API.Data;
 using User.API.DTOs;
@@ -55,6 +53,20 @@ public class UserController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("change-password")]
+    public async Task<ActionResult> ChangePassword([FromBody] UpdatePasswordDto updatePasswordDto)
+    {
+        var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var user = await _userManager.Users.FirstAsync(x => x.Id == applicationUserId);
+        var result = await _userManager.ChangePasswordAsync(user, updatePasswordDto.CurrentPassword, updatePasswordDto.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            return Ok();
+        }
+        return BadRequest();
+    }
+
 
     [HttpGet("profile")]
     public async Task<ActionResult<UserProfileDto>> GetUserProfileAsync()
@@ -64,11 +76,35 @@ public class UserController : ControllerBase
         {
             return BadRequest();
         }
-        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(x => x.ApplicationUserId  == applicationUserId);
+        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(x => x.ApplicationUserId == applicationUserId);
 
         var result = _mapper.Map<UserProfileDto>(userProfile);
 
         return Ok(result);
 
+    }
+
+    [HttpGet("profile/{userId}")]
+    public async Task<ActionResult<UserProfileDto>> GetUserProfileByUserIdAsync([FromQuery] string userId)
+    {
+        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(x => x.ApplicationUserId == userId);
+        var result = _mapper.Map<UserProfileDto>(userProfile);
+
+        return Ok(result);
+    }
+
+    [HttpPut("profile")]
+    public async Task<ActionResult<UserProfileDto>> UpdateUserProfile([FromBody] UserProfileDto userProfileDto)
+    {
+        var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var profile = await _context.UserProfiles.Where(x => x.ApplicationUserId == applicationUserId).SingleOrDefaultAsync();
+        if (profile == null)
+        {
+            return BadRequest();
+        }
+
+        var updateProfile = _mapper.Map<UserProfileDto, UserProfile>(userProfileDto, profile);
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }
