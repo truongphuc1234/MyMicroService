@@ -3,7 +3,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using User.API.Data;
 using User.API.DTOs;
@@ -59,6 +61,20 @@ public class UserController : ControllerBase
         var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
         var user = await _userManager.Users.FirstAsync(x => x.Id == applicationUserId);
         var result = await _userManager.ChangePasswordAsync(user, updatePasswordDto.CurrentPassword, updatePasswordDto.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            return Ok();
+        }
+        return BadRequest();
+    }
+
+    [HttpPost("change-email")]
+    public async Task<ActionResult> ChangeEmail([FromBody] string email)
+    {
+        var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var user = await _userManager.Users.FirstAsync(x => x.Id == applicationUserId);
+        var result = await _userManager.SetEmailAsync(user, email);
 
         if (!result.Succeeded)
         {
