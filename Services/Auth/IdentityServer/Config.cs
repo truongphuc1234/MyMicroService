@@ -11,6 +11,8 @@ public static class Config
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new IdentityResources.Email(),
+            new IdentityResources.Phone(),
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>

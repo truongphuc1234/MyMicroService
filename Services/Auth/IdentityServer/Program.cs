@@ -1,5 +1,4 @@
 using System.IO;
-using IdentityServer;
 using IdentityServer.Data;
 using IdentityServer.Entities;
 using Microsoft.AspNetCore.Builder;

@@ -9,5 +9,6 @@ public class AutoMapperProfiles : Profile
     public AutoMapperProfiles()
     {
         CreateMap<UserSignUpDto, ApplicationUser>();
+        CreateMap<UserProfileDto, UserProfile>().ReverseMap();
     }
 }

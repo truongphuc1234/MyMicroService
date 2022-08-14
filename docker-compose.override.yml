@@ -32,12 +32,14 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=mssqldb;Database=AppDb;User ID=SA;Password=Your_password123"
+      - "IdentityUrl=http://identityserver:80"
       - "CacheSettings:ConnectionString=redisdb,password=Your_password123"
     ports:
       - 8003:80
     depends_on:
       - mssqldb
       - redisdb
+      - identityserver
 
   identityserver:
     container_name: identityserver

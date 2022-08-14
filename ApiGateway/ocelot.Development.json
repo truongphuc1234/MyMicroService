@@ -21,6 +21,43 @@
             }
         },
         {
+            "DownstreamPathTemplate": "/User/signup",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "user.api",
+                    "Port": "80"
+                }
+            ],
+            "UpstreamPathTemplate": "/SignUp",
+            "UpstreamHttpMethod": [
+                "POST"
+            ]
+        },
+        {
+            "DownstreamPathTemplate": "/User/{any}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "user.api",
+                    "Port": "80"
+                }
+            ],
+            "UpstreamPathTemplate": "/User/{any}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+            ],
+            "AuthenticationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "AllowedScopes": [
+                    "api"
+                ]
+            }
+        },
+        {
             "DownstreamPathTemplate": "/connect/token",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [

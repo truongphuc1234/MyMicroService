@@ -14,7 +14,20 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ./mssqldb_data:/var/opt/mssql
+      - mssqldb_data:/var/opt/mssql
+
+  redisdb:
+    image: "redis:latest"
+    container_name: redisdb
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --requirepass Your_password123
+    volumes:
+      - redisdb_data:/data
 
 volumes:
   mssqldb_data:
+    external: true
+  redisdb_data:
+    external: true

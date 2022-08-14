@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -24,9 +25,7 @@ public class SeedData
 
             var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var hasUser = userMgr.Users.AnyAsync(x => true).Result;
-            if (!hasUser)
-            {
-                var users = new List<ApplicationUser>{new ApplicationUser
+            var users = new List<ApplicationUser>{new ApplicationUser
                 {
                     UserName = "alice",
                     Email = "AliceSmith@email.com",
@@ -39,12 +38,33 @@ public class SeedData
                     PhoneNumber = "0905169944"
                 }};
 
-
+            if (!hasUser)
+            {
                 foreach (var user in users)
                 {
-                   await userMgr.CreateAsync(user, "Pa$$w0rd123");
+                    await userMgr.CreateAsync(user, "Pa$$w0rd123");
                 }
             }
+
+            var hasUserProfile = context.UserProfiles.AnyAsync(x => true).Result;
+            if (!hasUserProfile)
+                foreach (var user in users)
+                {
+                    var savedUser = await userMgr.FindByNameAsync(user.UserName);
+
+                    var userProfile = new UserProfile
+                    {
+                        ApplicationUserId = savedUser.Id,
+                        ApplicationUser = savedUser,
+                        Birthday = new DateTime(),
+                        Gender = "Male",
+                        DisplayName = savedUser.UserName,
+                        Location = "ABC"
+                    };
+                    await context.UserProfiles.AddAsync(userProfile);
+
+                }
+            await context.SaveChangesAsync();
         }
     }
 }
