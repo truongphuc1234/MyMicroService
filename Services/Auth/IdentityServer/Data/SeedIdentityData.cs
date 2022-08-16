@@ -11,7 +11,14 @@ public class SeedIdentityData
 {
     public static void InitializeDatabase(IApplicationBuilder app)
     {
-        using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+        var serviceFactory = app.ApplicationServices.GetService<IServiceScopeFactory>();
+
+        if (serviceFactory == null)
+        {
+            return;
+        }
+
+        using (var serviceScope = serviceFactory.CreateScope())
         {
             serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 

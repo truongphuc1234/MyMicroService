@@ -83,6 +83,34 @@ public class UserController : ControllerBase
         return BadRequest();
     }
 
+    [HttpPost("change-phone")]
+    public async Task<ActionResult> ChangePhone([FromBody] string phone)
+    {
+        var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var user = await _userManager.Users.FirstAsync(x => x.Id == applicationUserId);
+        var result = await _userManager.SetPhoneNumberAsync(user, phone);
+
+        if (!result.Succeeded)
+        {
+            return Ok();
+        }
+        return BadRequest();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> DeleteUser()
+    {
+        var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var user = await _userManager.Users.FirstAsync(x => x.Id == applicationUserId);
+        var result = await _userManager.DeleteAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return Ok();
+        }
+        return BadRequest();
+    }
+
 
     [HttpGet("profile")]
     public async Task<ActionResult<UserProfileDto>> GetUserProfileAsync()

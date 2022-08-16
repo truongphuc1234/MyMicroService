@@ -13,6 +13,6 @@ public class UserProfile
     public string? Background { get; set; }
     public string? Location { get; set; }
     public string? DisplayName { get; set; }
-    public ApplicationUser ApplicationUser { get; set; }
-    public string ApplicationUserId { get; set; }
+    public ApplicationUser ApplicationUser { get; set; } = null!;
+    public string ApplicationUserId { get; set; } = string.Empty;
 }

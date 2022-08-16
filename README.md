@@ -14,10 +14,10 @@ User.API:
 | Method | End points                | Status |
 | :----- | :------------------------ | :----- |
 | POST   | /user/sign-in             | Done   |
-| DELETE | /user/delete              |        |
+| DELETE | /user                     | Done   |
 | POST   | /user/change/password     | Done   |
 | POST   | /user/change/email        | Done   |
-| POST   | /user/change/phone-number |        |
+| POST   | /user/change/phone-number | Done   |
 | POST   | /user/forgot-password     |        |
 | GET    | /user/profile             | Done   |
 | GET    | /user/profile/{user-id}   | Done   |
