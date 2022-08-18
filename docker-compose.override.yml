@@ -40,6 +40,7 @@ services:
       - mssqldb
       - redisdb
       - identityserver
+      - logstash
 
   identityserver:
     container_name: identityserver
@@ -73,3 +74,49 @@ services:
     command: redis-server --save 20 1 --requirepass Your_password123
     volumes: 
       - redisdb_data:/data
+
+  rabbitmq:
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_conf:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      discovery.type: single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - elastic_data:/usr/share/elasticsearch/data
+  
+  kibana:
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      - "ELASTICSEARCH_URL=http://elasticsearch:9200"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+
+  logstash:
+    container_name: logstash
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+      - "50000:50000/tcp"
+      - "50000:50000/udp"
+      - "9600:9600"

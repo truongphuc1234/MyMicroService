@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using StackExchange.Redis;
 using User.API.Data;
 using User.API.Entities;
@@ -19,6 +20,10 @@ var connectionString = builder.Configuration.GetValue<string>("DatabaseSettings:
 
 // Add services to the container.
 
+builder.Host.UseSerilog((hostContext, services, configuration) => {
+    configuration
+        .ReadFrom.Configuration(hostContext.Configuration);
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

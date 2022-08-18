@@ -26,8 +26,59 @@ services:
     volumes:
       - redisdb_data:/data
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_conf:var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+
+  elasticsearch:
+    container_name: elastic
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - elastic_conf:/usr/share/elasticsearch/config/elasticsearch.yml
+      - "es-data:/usr/share/elasticsearch/data"
+
+  kibana:
+    container_name: kibana
+    ports:
+      - 5601:5601
+    volumes:
+      - kibana_conf:/etc/kibana/kibana.yml
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    container_name: logstash
+    command: logstash -f /config/
+    environment:
+      - JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - logstash_conf:/config
+    depends_on:
+      - elasticsearch
+      - redisdb
+
 volumes:
+  rabbitmq_conf:
+    external: true
+  kibana_conf:
+    external: true
+  elastic_conf:
+    external: true
   mssqldb_data:
     external: true
   redisdb_data:
+    external: true
+  rabbitmq_log:
+    external: true
+  elastic_data:
     external: true
