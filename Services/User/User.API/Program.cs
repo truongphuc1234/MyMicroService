@@ -22,7 +22,8 @@ var connectionString = builder.Configuration.GetValue<string>("DatabaseSettings:
 
 builder.Host.UseSerilog((hostContext, services, configuration) => {
     configuration
-        .ReadFrom.Configuration(hostContext.Configuration);
+        .MinimumLevel.Debug()
+        .WriteTo.Http("http://logstash:5044",100000);
 });
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

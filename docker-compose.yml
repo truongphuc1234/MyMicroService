@@ -48,12 +48,6 @@ services:
 volumes:
   rabbitmq_conf:
     external: true
-  kibana_conf:
-    external: true
-  elastic_conf:
-    external: true
-  logstash_conf:
-    external: true
   mssqldb_data:
     external: true
   redisdb_data:
