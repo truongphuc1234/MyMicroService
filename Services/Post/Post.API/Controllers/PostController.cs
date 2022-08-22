@@ -21,56 +21,50 @@ public class PostController : ControllerBase
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _postService = postService ?? throw new ArgumentNullException(nameof(postService));
-
     }
 
     [HttpPost]
     public ActionResult CreatePost([FromBody] CreatePostDto postCreateDto)
     {
         _logger.LogInformation("Create new Post");
-
         _postService.CreatePost(postCreateDto);
         return Ok();
     }
 
     [HttpDelete("/{id}")]
-    public ActionResult DeletePost(string id) 
+    public ActionResult DeletePost(string id)
     {
-        _logger.LogInformation("received a delete request for post id {} from user {}", id, User.GetName());
+        _logger.LogInformation($"Received a delete request for post id {id} from user {User.GetDisplayName()}");
         var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
         _postService.DeletePost(id, applicationUserId);
         return Ok();
     }
 
-@GetMapping("/posts/me")
-    public ResponseEntity<?> FindCurrentUserPosts()
-{
-    log.info("retrieving posts for user {}", principal.getName());
-
-    List<Post> posts = postService.postsByUsername(principal.getName());
-    log.info("found {} posts for user {}", posts.size(), principal.getName());
-
-    return ResponseEntity.ok(posts);
-}
-
-@GetMapping("/posts/{username}")
-    public ResponseEntity<?> findUserPosts(@PathVariable("username") String username) {
-        log.info("retrieving posts for user {}", username);
-
-        List<Post> posts = postService.postsByUsername(username);
-log.info("found {} posts for user {}", posts.size(), username);
-
-        return ResponseEntity.ok(posts);
+    [HttpGet]
+    public ActionResult FindCurrentUserPosts()
+    {
+        var applicationUserId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        _logger.LogInformation($"Retrieving posts for user {User.GetDisplayName()}");
+        List<Post> posts = _postService.GetPostsByUserId(applicationUserId);
+        _logger.LogInformation($"Found {posts.Count} posts for user {User.GetDisplayName()}");
+        return Ok(posts);
     }
 
-    @PostMapping("/posts/in")
-    public ResponseEntity<?> findPostsByIdIn(@RequestBody List<String> ids)
-{
-    log.info("retrieving posts for {} ids", ids.size());
+    [HttpGet("/user/{userId}")]
+    public ActionResult FindUserPosts(string userId)
+    {
+        _logger.LogInformation($"Retrieving posts for user id {userId}");
+        List<Post> posts = _postService.GetPostsByUserId(userId);
+        _logger.LogInformation($"Found {posts.Count} posts for user {User.GetDisplayName()}");
+        return Ok(posts);
+    }
 
-    List<Post> posts = postService.postsByIdIn(ids);
-    log.info("found {} posts", posts.size());
-
-    return ResponseEntity.ok(posts);
-}
+    [HttpPost("/postsByIds")]
+    public ActionResult FindPostsByIds([FromBody] List<String> ids)
+    {
+        _logger.LogInformation($"Retrieving posts for {ids.Count} ids");
+        List<Post> posts = _postService.GetPostsByIds(ids);
+        _logger.LogInformation($"found {posts.Count} posts");
+        return Ok(posts);
+    }
 }
